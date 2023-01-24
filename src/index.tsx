@@ -1,8 +1,27 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules } from 'react-native';
+
+interface config {
+  upiId: string;
+  name: string;
+  note: string;
+  amount: string;
+  targetPackage?: string;
+  chooserText?: string;
+}
+
+interface success {
+  status: 'SUCCESS';
+  txnId: string;
+  code: string;
+  approvalRefNo: string;
+}
+interface error {
+  status: 'FAILED';
+  message: string;
+}
 
 const LINKING_ERROR =
   `The package 'one-react-native-upi' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
@@ -17,6 +36,21 @@ const OneReactNativeUpi = NativeModules.OneReactNativeUpi
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return OneReactNativeUpi.multiply(a, b);
-}
+const OneUpi = {
+  initiate(
+    { targetPackage = '', chooserText = 'Pay with ', ...config }: config,
+    onSuccess: () => success,
+    onFailure: () => error
+  ) {
+    OneReactNativeUpi.initiatePayment(
+      { targetPackage, chooserText, ...config },
+      onSuccess,
+      onFailure
+    );
+  },
+
+  getInstalledApps(): () => String[] {
+    return OneReactNativeUpi.getInstalledUPIApps();
+  },
+};
+export default OneUpi;

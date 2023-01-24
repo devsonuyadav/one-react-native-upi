@@ -1,0 +1,14 @@
+# Query: bootstrap
+# ContextLines: 1
+
+2 results - 2 files
+
+.yarnrc:
+  2  
+
+  4  
+
+package.json:
+  35      "example": "yarn --cwd example",
+  36:     "bootstrap": "yarn example && yarn install && yarn example pods",
+  37      "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build"
